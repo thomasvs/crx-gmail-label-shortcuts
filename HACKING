@@ -1,0 +1,13 @@
+References
+
+ * chrome extensions:
+   * tutorial: https://developer.chrome.com/extensions/getstarted
+   * keyboard shortcuts: https://developer.chrome.com/apps/commands
+   * sample with gmail and login: https://github.com/GoogleDeveloperExperts/chrome-extension-google-apis/commit/9c531d92092a6042aa3bdd1a46604efec6b4caae
+   * another sample: https://medium.com/streak-developer-blog/how-to-use-the-gmail-api-in-a-chrome-extension-a272b2405b57
+     didn't work out for me
+ * GMail api:
+   * https://developers.google.com/gmail/api/quickstart/js
+ * envsubst/Makefile:
+   https://unix.stackexchange.com/questions/235223/makefile-include-env-file
+   https://stackoverflow.com/questions/14155596/how-to-substitute-shell-variables-in-complex-text-files

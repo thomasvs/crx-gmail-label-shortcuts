@@ -240,6 +240,22 @@ function get(options) {
     xhr.send();
 }
 
+function post(options, data) {
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            // JSON response assumed. Other APIs may have different responses.
+            if (options.callback) { options.callback(JSON.parse(xhr.responseText)); }
+        } else {
+            console.log('post', xhr.readyState, xhr.status, xhr.responseText);
+        }
+    };
+    xhr.open("POST", options.url, true);
+    // Set standard Google APIs authentication header.
+    xhr.setRequestHeader('Authorization', 'Bearer ' + options.token);
+    xhr.setRequestHeader('Content-type', 'application/json');
+    xhr.send(data);
+}
 /**
  * Set browserAction status.
  *

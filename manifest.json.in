@@ -43,12 +43,17 @@
     },
     "key": "${KEY}",
   "commands": {
-    "toggle-feature": {
+    "next-action": {
       "suggested_key": {
-        "default": "Ctrl+Shift+Y",
-        "mac": "MacCtrl+Shift+Y"
+        "default": "Ctrl+Shift+6"
        },
-      "description": "Send a 'toggle-feature' event to the extension"
+      "description": "Move current mail to @GTD/S/nextaction"
+    },
+    "waiting-for": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+7"
+       },
+      "description": "Move current mail to @GTD/S/waitingfor"
     }
   }
 

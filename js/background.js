@@ -215,6 +215,37 @@ function getLabelsCallback(labels) {
         global_labels[label['name']] = label['id'];
     });
     console.log('next action label id: ' + global_labels['@GTD/S/nextaction']);
+    console.log('waiting for label id: ' + global_labels['@GTD/S/waitingfor']);
+}
+
+function labelCurrentThreadsAs(token, label) {
+    function labelThread(threadId) {
+        var data = new FormData();
+	var remove = [ 'INBOX' ];
+	if (label == '@GTD/S/nextaction') {
+	    remove.push(global_labels['@GTD/S/waitingfor']);
+	}
+	if (label == '@GTD/S/waitingfor') {
+	    remove.push(global_labels['@GTD/S/nextaction']);
+	}
+
+	console.log('remove:');
+	console.log(remove);
+
+        data = '{ ' +
+            ' "addLabelIds": [ "' + global_labels[label] + '" ] ' +
+            ', ' +
+            ' "removeLabelIds": [ ' + remove.map(l => `'${l}'`).join(',') + ' ] ' +
+        '} ';
+
+        post({
+            'url': 'https://www.googleapis.com/gmail/v1/users/me/threads/' + threadId + '/modify',
+            'callback': null,
+            'token': token
+        }, data);
+    }
+
+    getActiveThreadId(labelThread);
 }
 
 function getMessages(token) {
@@ -240,32 +271,19 @@ function getMessage(token, id) {
 }
 
 
-function labelThread(threadId) {
-    var data = new FormData();
-
-    data = '{ ' +
-	' "addLabelIds": [ "' + global_labels['@GTD/S/nextaction'] + '" ] ' +
-	', ' +
-	' "removeLabelIds": [ "INBOX" ] ' +
-    '} ';
-
-    post({
-        'url': 'https://www.googleapis.com/gmail/v1/users/me/threads/' + threadId + '/modify',
-        'callback': null,
-        'token': global_token
-    }, data);
-}
-
 function getMessageCallback(message) {
     console.log('getMessage: message ' + message);
     //console.log('getMessages: message id: ' + messages[0].id);
-    getActiveThreadId(labelThread);
+    //getActiveThreadId(labelThread);
 }
 
+/* gets the currently active mail thread id,
+ * and calls the given callback with it */
 function getActiveThreadId(callback) {
     chrome.tabs.executeScript(null, {
         code: "document.querySelector('[role=\"main\"] [data-legacy-thread-id]').getAttribute('data-legacy-thread-id')"},
-   function(results){ callback(results[0]); } );
+        function(results) { callback(results[0]); }
+    );
 }
 
 /**
@@ -397,12 +415,13 @@ chrome.notifications.onClicked.addListener(notificationClicked);
 chrome.browserAction.onClicked.addListener(browserActionClicked);
 chrome.alarms.onAlarm.addListener(onAlarm);
 
-// thomasvs
-
+// thomasvs: react on keypresses
 chrome.commands.onCommand.addListener(function(command) {
   console.log('onCommand event received for message: ', command);
-  if (command == 'toggle-feature') {
-    getMessages(global_token);
+  if (command == 'next-action') {
+    labelCurrentThreadsAs(global_token, '@GTD/S/nextaction');
+  } else if (command == 'waiting-for') {
+    labelCurrentThreadsAs(global_token, '@GTD/S/waitingfor');
   }
 });
 

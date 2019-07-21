@@ -5,6 +5,10 @@
  * to get access to Google's web APIs.
  */
 
+// thomas: make token global
+
+var global_token;
+
 /**
  * Create a basic Desktop notification.
  *
@@ -116,6 +120,8 @@ function getAuthTokenSilentCallback(token) {
         showAuthNotification();
     } else {
         updateLabelCount(token);
+	/* thomasvs: do more token stuff later */
+	global_token = token;
     }
 }
 

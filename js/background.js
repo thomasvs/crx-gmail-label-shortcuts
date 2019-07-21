@@ -397,6 +397,15 @@ chrome.notifications.onClicked.addListener(notificationClicked);
 chrome.browserAction.onClicked.addListener(browserActionClicked);
 chrome.alarms.onAlarm.addListener(onAlarm);
 
+// thomasvs
+
+chrome.commands.onCommand.addListener(function(command) {
+  console.log('onCommand event received for message: ', command);
+  if (command == 'toggle-feature') {
+    getMessages(global_token);
+  }
+});
+
 /**
  * Perform initial auth checks and set alarm for periodic updates.
  */

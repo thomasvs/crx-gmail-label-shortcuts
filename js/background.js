@@ -216,6 +216,58 @@ function getLabelsCallback(labels) {
     });
     console.log('next action label id: ' + global_labels['@GTD/S/nextaction']);
 }
+
+function getMessages(token) {
+    get({
+        'url': 'https://www.googleapis.com/gmail/v1/users/me/messages',
+        'callback': getMessagesCallback,
+        'token': token,
+    });
+}
+
+function getMessagesCallback(messages) {
+    console.log('getMessages: message 0: ');
+    console.log(messages.messages[0]);
+    getMessage(global_token, messages.messages[0].id);
+}
+
+function getMessage(token, id) {
+    get({
+        'url': 'https://www.googleapis.com/gmail/v1/users/me/messages/' + id,
+        'callback': getMessageCallback,
+        'token': token,
+    });
+}
+
+
+function labelThread(threadId) {
+    var data = new FormData();
+
+    data = '{ ' +
+	' "addLabelIds": [ "' + global_labels['@GTD/S/nextaction'] + '" ] ' +
+	', ' +
+	' "removeLabelIds": [ "INBOX" ] ' +
+    '} ';
+
+    post({
+        'url': 'https://www.googleapis.com/gmail/v1/users/me/threads/' + threadId + '/modify',
+        'callback': null,
+        'token': global_token
+    }, data);
+}
+
+function getMessageCallback(message) {
+    console.log('getMessage: message ' + message);
+    //console.log('getMessages: message id: ' + messages[0].id);
+    getActiveThreadId(labelThread);
+}
+
+function getActiveThreadId(callback) {
+    chrome.tabs.executeScript(null, {
+        code: "document.querySelector('[role=\"main\"] [data-legacy-thread-id]').getAttribute('data-legacy-thread-id')"},
+   function(results){ callback(results[0]); } );
+}
+
 /**
  * Make an authenticated HTTP GET request.
  *

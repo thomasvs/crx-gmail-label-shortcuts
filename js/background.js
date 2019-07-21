@@ -8,6 +8,7 @@
 // thomas: make token global
 
 var global_token;
+var global_labels;
 
 /**
  * Create a basic Desktop notification.
@@ -122,6 +123,7 @@ function getAuthTokenSilentCallback(token) {
         updateLabelCount(token);
 	/* thomasvs: do more token stuff later */
 	global_token = token;
+	getLabels(token);
     }
 }
 
@@ -196,6 +198,24 @@ function updateLabelCountCallback(label) {
     setBadgeCount(label.threadsUnread);
 }
 
+/* thomasvs: do more token stuff */
+function getLabels(token) {
+    get({
+        'url': 'https://www.googleapis.com/gmail/v1/users/me/labels',
+        'callback': getLabelsCallback,
+        'token': token,
+    });
+}
+
+function getLabelsCallback(labels) {
+
+    global_labels = new Object();
+
+    labels.labels.forEach(function (label, index) {
+        global_labels[label['name']] = label['id'];
+    });
+    console.log('next action label id: ' + global_labels['@GTD/S/nextaction']);
+}
 /**
  * Make an authenticated HTTP GET request.
  *
